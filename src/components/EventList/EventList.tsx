@@ -12,7 +12,7 @@ const mockEvents = [
     day: '2021-09-01',
   },
   {
-    id: '36909f00-1884-11ec-9ef3-e326e4ebefc8',
+    id: '36909f00-1884-11ec-9ef3-e326e4ebefc1',
     title: 'Новая задача2',
     startTime: '16:27',
     endTime: '17:28',
