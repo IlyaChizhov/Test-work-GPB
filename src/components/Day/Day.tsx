@@ -20,6 +20,7 @@ export default function Day() {
       <Button variant="contained">
         <Add /> New Event
       </Button>
+      Test render!!!
     </Wrap>
   )
 }
