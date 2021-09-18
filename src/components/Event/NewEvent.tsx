@@ -58,6 +58,7 @@ const initialEvent = {
   startTime: convertDateToTime(),
   endTime: convertDateToTime(DateTime.local().plus({ hours: 1 })),
   remindTime: remindsInterval[0],
+  day: '',
 }
 
 interface Event {
@@ -66,15 +67,23 @@ interface Event {
   startTime: string
   endTime: string
   remindTime: number
+  day: string
 }
 
-export default function NewEvent() {
+interface Props {
+  type?: 'new' | 'edit'
+  event?: Event
+}
+
+export default function NewEvent({ type = 'new', event: externalEvent = initialEvent }: Props) {
   const history = useHistory()
-  const { day } = useParams<{ day: string }>()
+  const { day, eventId } = useParams<{ day: string; eventId: string }>()
 
-  const [event, changeEvent] = useState<Event>(initialEvent)
+  console.log(eventId, 'eventId')
 
-  convertDateToTime()
+  const [event, changeEvent] = useState<Event>(
+    type === 'new' ? { ...externalEvent, day } : externalEvent
+  )
 
   const closeModal = () => {
     history.push(`/day/${day}`)
@@ -86,65 +95,64 @@ export default function NewEvent() {
 
   const submit = () => {
     console.log(event)
+    closeModal()
   }
 
   return (
-    <div>
-      <StyledModal open={true} onClose={closeModal}>
-        <StyledPaper>
-          <CloseButton onClick={closeModal}>
-            <Close />
-          </CloseButton>
+    <StyledModal open={true} onClose={closeModal}>
+      <StyledPaper>
+        <CloseButton onClick={closeModal}>
+          <Close />
+        </CloseButton>
 
-          <Title variant="h5">Добавьте новое событие</Title>
+        <Title variant="h5">Добавьте новое событие</Title>
 
-          <StyledField
-            required
-            value={event['title']}
-            label="Название события"
-            variant="outlined"
-            onChange={handleChange('title')}
-          />
-          <StyledField
-            required
-            type="time"
-            value={event['startTime']}
-            label="Начало события"
-            variant="outlined"
-            onChange={handleChange('startTime')}
-          />
-          <StyledField
-            required
-            type="time"
-            value={event['endTime']}
-            label="Окончание события"
-            variant="outlined"
-            onChange={handleChange('endTime')}
-          />
-          <Select
-            native
-            required
-            variant="outlined"
-            onChange={handleChange('remindTime')}
-            value={event['remindTime']}
-          >
-            {remindsInterval.map((interval) => (
-              <option key={interval} value={interval}>
-                {interval} минут
-              </option>
-            ))}
-          </Select>
+        <StyledField
+          required
+          value={event['title']}
+          label="Название события"
+          variant="outlined"
+          onChange={handleChange('title')}
+        />
+        <StyledField
+          required
+          type="time"
+          value={event['startTime']}
+          label="Начало события"
+          variant="outlined"
+          onChange={handleChange('startTime')}
+        />
+        <StyledField
+          required
+          type="time"
+          value={event['endTime']}
+          label="Окончание события"
+          variant="outlined"
+          onChange={handleChange('endTime')}
+        />
+        <Select
+          native
+          required
+          variant="outlined"
+          onChange={handleChange('remindTime')}
+          value={event['remindTime']}
+        >
+          {remindsInterval.map((interval) => (
+            <option key={interval} value={interval}>
+              {interval} минут
+            </option>
+          ))}
+        </Select>
 
-          <ButtonGroup>
-            <Button onClick={closeModal} variant="contained">
-              отменить
-            </Button>
-            <Button onClick={submit} color="primary" variant="contained">
-              сохранить
-            </Button>
-          </ButtonGroup>
-        </StyledPaper>
-      </StyledModal>
-    </div>
+        <ButtonGroup>
+          <Button onClick={closeModal} variant="contained">
+            отменить
+          </Button>
+          <Button onClick={submit} color="primary" variant="contained">
+            сохранить
+          </Button>
+        </ButtonGroup>
+      </StyledPaper>
+    </StyledModal>
   )
 }
