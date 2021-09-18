@@ -4,9 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "7.12.3",
-    "@emotion/react": "^11.4.1",
-    "@emotion/styled": "^11.3.0",
-    "@material-ui/core": "^5.0.0-beta.5",
+    "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/styles": "^4.11.4",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
@@ -83,6 +81,7 @@
     "ts-pnp": "1.2.0",
     "typescript": "^4.1.2",
     "url-loader": "4.1.1",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
     "webpack": "4.44.2",
     "webpack-dev-server": "3.11.1",
@@ -125,7 +124,8 @@
   "devDependencies": {
     "@types/luxon": "^2.0.4",
     "@types/react-router-dom": "^5.1.9",
-    "@types/styled-components": "^5.1.14"
+    "@types/styled-components": "^5.1.14",
+    "@types/uuid": "^8.3.1"
   },
   "jest": {
     "roots": [
