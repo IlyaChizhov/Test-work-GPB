@@ -1,8 +1,8 @@
 export interface CalendarEvent {
-  id: number
+  id: string
   title: string
-  timeStart: number
-  timeEnd: number
+  startTime: string
+  endTime: string
   remindTime: number
   day: string
 }

@@ -1,29 +1,13 @@
 import React from 'react'
 import { Button } from '@material-ui/core'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-
-const mockEvents = [
-  {
-    id: '36909f00-1884-11ec-9ef3-e326e4ebefc8',
-    title: 'Новая задача',
-    startTime: '16:27',
-    endTime: '17:27',
-    remindTime: 5,
-    day: '2021-09-01',
-  },
-  {
-    id: '36909f00-1884-11ec-9ef3-e326e4ebefc1',
-    title: 'Новая задача2',
-    startTime: '16:27',
-    endTime: '17:28',
-    remindTime: '60',
-    day: '2021-09-01',
-  },
-]
+import { useSelector } from 'react-redux'
+import { eventsSelector } from '../../ducks/events'
 
 export default function EventList() {
   const history = useHistory()
   const { url } = useRouteMatch()
+  const { events } = useSelector(eventsSelector)
 
   const handleEdit = (id: string) => () => {
     history.push(`${url}/event/${id}/edit`)
@@ -35,7 +19,7 @@ export default function EventList() {
 
   return (
     <div>
-      {mockEvents.map((event) => (
+      {events.map((event) => (
         <div key={event.id}>
           <div>
             <div>{event.title}</div>

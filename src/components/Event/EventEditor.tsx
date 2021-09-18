@@ -7,6 +7,10 @@ import { Close } from '@material-ui/icons'
 import { v1 } from 'uuid'
 import { convertDateToTime } from '../../utils/dateHelpers'
 import { DateTime } from 'luxon'
+import api from '../../api'
+import { CalendarEvent } from '../../utils'
+import { useSelector } from 'react-redux'
+import { eventsIdSelector } from '../../ducks/events'
 
 const StyledModal = styled(Modal)`
   display: flex;
@@ -61,28 +65,19 @@ const initialEvent = {
   day: '',
 }
 
-interface Event {
-  id: string
-  title: string
-  startTime: string
-  endTime: string
-  remindTime: number
-  day: string
-}
-
 interface Props {
-  type?: 'new' | 'edit'
-  event?: Event
+  type: 'new' | 'edit'
+  event?: CalendarEvent
 }
 
-export default function NewEvent({ type = 'new', event: externalEvent = initialEvent }: Props) {
+export default function EventEditor({ type = 'new' }: Props) {
   const history = useHistory()
   const { day, eventId } = useParams<{ day: string; eventId: string }>()
 
-  console.log(eventId, 'eventId')
-
-  const [event, changeEvent] = useState<Event>(
-    type === 'new' ? { ...externalEvent, day } : externalEvent
+  const loadedEvent = useSelector((state) => eventsIdSelector(state, { eventId }))
+  console.log(loadedEvent, 'loadedEvent')
+  const [event, changeEvent] = useState<CalendarEvent>(
+    type === 'new' ? { ...initialEvent, day } : loadedEvent || { ...initialEvent, day }
   )
 
   const closeModal = () => {
@@ -93,8 +88,13 @@ export default function NewEvent({ type = 'new', event: externalEvent = initialE
     changeEvent((state) => ({ ...state, [type]: event.target.value }))
   }
 
-  const submit = () => {
-    console.log(event)
+  const submit = async () => {
+    if (type === 'new') {
+      await api.saveEvent(event)
+    } else {
+      await api.updateEvent(event.id, event)
+    }
+
     closeModal()
   }
 

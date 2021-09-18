@@ -1,8 +1,14 @@
 import { CalendarEvent } from '../utils/types'
+import { set, values } from 'idb-keyval'
 
 export default {
-  saveEvent: (event: CalendarEvent) => {},
-  updateEvent: (id: number, path: Partial<CalendarEvent>) => {},
-  deleteEvent: (id: number) => {},
+  getAllEvents: () => {
+    return values()
+  },
+  saveEvent: (event: CalendarEvent) => {
+    return set(event.id, event)
+  },
+  updateEvent: (id: string, patch: Partial<CalendarEvent>) => {},
+  deleteEvent: (id: string) => {},
   getEventsForDay: (day: string) => {},
 }

@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { Button } from '@material-ui/core'
 import { Add } from '@material-ui/icons'
 import { useHistory, useRouteMatch, Switch, Route } from 'react-router-dom'
-import NewEvent from '../Event/NewEvent'
+import EventEditor from '../Event/EventEditor'
 import EventList from '../EventList/EventList'
 import DeleteEvent from '../Event/DeleteEvent'
+import { useDispatch } from 'react-redux'
+import { loadEvents } from '../../ducks/events'
 
 const Wrap = styled.div`
   padding: 16px;
@@ -18,6 +20,11 @@ const StyledButton = styled(Button)`
 export default function Day() {
   const history = useHistory()
   const { url } = useRouteMatch()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(loadEvents())
+  }, [dispatch])
 
   const openNewEventModal = () => {
     history.push(`${url}/event/new`)
@@ -33,10 +40,10 @@ export default function Day() {
 
       <Switch>
         <Route path="/day/:day/event/new">
-          <NewEvent type="new" />
+          <EventEditor type="new" />
         </Route>
         <Route path="/day/:day/event/:eventId/edit">
-          <NewEvent type="edit" />
+          <EventEditor type="edit" />
         </Route>
         <Route path="/day/:day/event/:eventId/delete">
           <DeleteEvent />
