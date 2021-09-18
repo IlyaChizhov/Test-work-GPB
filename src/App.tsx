@@ -1,13 +1,13 @@
 import React from 'react'
-import styles from './App.module.scss'
-import Calendar from './components/Calendar/Calendar'
+import './index.scss'
+import { BrowserRouter as Router } from 'react-router-dom'
+import Routes from './components/Routes/Routes'
 
 function App() {
   return (
-    <div className={styles.App}>
-      Test
-      <Calendar />
-    </div>
+    <Router>
+      <Routes />
+    </Router>
   )
 }
 

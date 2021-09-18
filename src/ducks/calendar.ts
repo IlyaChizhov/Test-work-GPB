@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
 import { DateTime } from 'luxon'
+import { DateTypes } from '../utils'
 
 const name = 'calendar'
 
@@ -20,10 +21,12 @@ const { reducer, actions } = createSlice({
   name,
   initialState,
   reducers: {
-    changeActiveDate: (state, { payload }: PayloadAction<{ key: string; date: number }>) => ({
-      ...state,
-      [payload.key]: payload.date,
-    }),
+    changeActiveDate: (
+      state: CalendarState,
+      { payload }: PayloadAction<{ key: DateTypes; date: number }>
+    ) => {
+      state[payload.key] = payload.date
+    },
   },
 })
 
