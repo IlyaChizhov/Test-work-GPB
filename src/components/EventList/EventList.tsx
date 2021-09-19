@@ -2,12 +2,15 @@ import React from 'react'
 import { Button } from '@material-ui/core'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { eventsSelector } from '../../ducks/events'
+import { eventsDaySelector } from '../../ducks/events'
+import { useParams } from 'react-router'
 
 export default function EventList() {
   const history = useHistory()
   const { url } = useRouteMatch()
-  const { events } = useSelector(eventsSelector)
+  const { day } = useParams<{ day: string }>()
+
+  const events = useSelector((state) => eventsDaySelector(state, { day }))
 
   const handleEdit = (id: string) => () => {
     history.push(`${url}/event/${id}/edit`)

@@ -23,4 +23,6 @@ export const CloseButton = styled(IconButton)`
 export const Message = styled.div`
   font-size: 17px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
 `

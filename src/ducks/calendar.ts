@@ -1,9 +1,11 @@
-import { take, all } from 'redux-saga/effects'
+import { select, take, all, call } from 'redux-saga/effects'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
 import { DateTime } from 'luxon'
-import { DateTypes } from '../utils'
+import { CalendarEvent, DATE_FORMAT, DateTypes } from '../utils'
+import { eventsSelector } from './events'
+import { eventChannel, END } from 'redux-saga'
 
 const name = 'calendar'
 
@@ -27,6 +29,7 @@ const { reducer, actions } = createSlice({
     ) => {
       state[payload.key] = payload.date
     },
+    initCalendarWatcher: (state) => state,
   },
 })
 
@@ -45,14 +48,42 @@ export const activeMonthSelector = createSelector(sliceSelector, (state) => stat
 /**
  * Sagas
  **/
-export function* activeDateSaga() {
+
+function intervalChannel(secs: number) {
+  return eventChannel((emitter) => {
+    const iv = setInterval(() => {
+      emitter('')
+    }, secs)
+
+    return () => {
+      clearInterval(iv)
+    }
+  })
+}
+
+export function* calendarWatcherSaga() {
+  // @ts-ignore
+  const channel = yield call(intervalChannel, 1000)
   while (true) {
-    try {
-      yield take(changeActiveDate)
-    } catch (error) {}
+    yield take(channel)
+
+    const { events }: { events: CalendarEvent[] } = yield select(eventsSelector)
+
+    const { day, startTime } = events?.[0]
+    const t = DateTime.fromFormat(day, DATE_FORMAT)
+    const time = DateTime.fromISO(startTime)
+
+    const modified = t.set({ hour: time.hour, minute: time.minute })
+
+    console.log(modified.toISO())
+
+    const foundEvent = events.find((event) => {
+      const { day } = event
+      const t = DateTime.fromFormat(day, DATE_FORMAT)
+    })
   }
 }
 
 export function* saga() {
-  yield all([activeDateSaga()])
+  yield all([calendarWatcherSaga()])
 }

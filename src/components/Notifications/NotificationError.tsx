@@ -20,11 +20,14 @@ export default function NotificationError({ notification }: { notification: Noti
 
   return (
     <StyledPaper>
-      <Message>
-        <Icon />
-        {notification.message}
-      </Message>
-      <Description>{notification.description}</Description>
+      <div>
+        <Message>
+          <Icon />
+          {notification.message}
+        </Message>
+        <Description>{notification.description}</Description>
+      </div>
+
       <CloseButton onClick={handleDelete}>
         <Close />
       </CloseButton>

@@ -48,6 +48,12 @@ export const eventsIdSelector = createSelector(
   ({ events }, eventId) => events.find(({ id }) => id === eventId) || ({} as CalendarEvent)
 )
 
+export const eventsDaySelector = createSelector(
+  eventsSelector,
+  propSelector<string>('day'),
+  ({ events }, day) => events.filter((event) => event.day === day)
+)
+
 /**
  * Sagas
  **/

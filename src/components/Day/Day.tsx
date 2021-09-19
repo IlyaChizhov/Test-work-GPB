@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Button } from '@material-ui/core'
 import { Add } from '@material-ui/icons'
-import { useHistory, useRouteMatch, Switch, Route } from 'react-router-dom'
+import { useHistory, useRouteMatch, Switch, Route, Link } from 'react-router-dom'
 import EventEditor from '../Event/EventEditor'
 import EventList from '../EventList/EventList'
 import DeleteEvent from '../Event/DeleteEvent'
@@ -25,9 +25,13 @@ export default function Day() {
 
   return (
     <Wrap>
-      <StyledButton onClick={openNewEventModal} color="primary" variant="contained">
-        <Add /> New Event
-      </StyledButton>
+      <div>
+        <StyledButton onClick={openNewEventModal} color="primary" variant="contained">
+          <Add /> New Event
+        </StyledButton>
+
+        <Link to="/">Return to Calendar</Link>
+      </div>
 
       <EventList />
 

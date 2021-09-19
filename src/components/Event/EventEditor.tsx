@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button, IconButton, Modal, Paper, Select, TextField, Typography } from '@material-ui/core'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { Close } from '@material-ui/icons'
 import { v1 } from 'uuid'
-import { convertDateToTime } from '../../utils/dateHelpers'
 import { DateTime } from 'luxon'
-import { CalendarEvent } from '../../utils'
+import { CalendarEvent, DATE_FORMAT } from '../../utils'
 import { useDispatch, useSelector } from 'react-redux'
 import { eventsIdSelector, saveEvent, updateEvent } from '../../ducks/events'
+import { convertToTime } from '../../utils/dateHelpers'
 
 const StyledModal = styled(Modal)`
   display: flex;
@@ -58,11 +58,11 @@ const remindsInterval = [5, 15, 30, 60]
 const initialEvent = {
   id: '',
   title: 'Новая задача',
-  startTime: convertDateToTime(),
-  endTime: convertDateToTime(DateTime.local().plus({ hours: 1 })),
+  startTime: DateTime.local().toISO(),
+  endTime: DateTime.local().plus({ hours: 1 }).toISO(),
   remindTime: remindsInterval[0],
   day: '',
-  createdAt: '',
+  createdAt: DateTime.local().toISO(),
 }
 
 interface Props {
@@ -75,23 +75,42 @@ export default function EventEditor({ type = 'new' }: Props) {
   const { day, eventId } = useParams<{ day: string; eventId: string }>()
   const dispatch = useDispatch()
 
+  const loadedEvent = useSelector((state) => eventsIdSelector(state, { eventId }))
+  const isEmptyEvent = useMemo(() => !Object.keys(loadedEvent).length, [loadedEvent])
+
   const isNew = type === 'new'
 
-  const loadedEvent = useSelector((state) => eventsIdSelector(state, { eventId }))
+  const [event, changeEvent] = useState<CalendarEvent>(
+    type === 'new' || isEmptyEvent ? initialEvent : loadedEvent
+  )
 
-  const [event, changeEvent] = useState<CalendarEvent>(type === 'new' ? initialEvent : loadedEvent)
+  useEffect(() => {
+    if (type === 'edit' && !isEmptyEvent) {
+      changeEvent(loadedEvent)
+    }
+  }, [type, loadedEvent, isEmptyEvent])
 
   const closeModal = () => {
     history.push(`/day/${day}`)
   }
 
-  const handleChange = (type: string) => (event: any) => {
-    changeEvent((state) => ({ ...state, [type]: event.target.value }))
+  const handleChange = (type: string, value: any) => {
+    changeEvent((state) => ({ ...state, [type]: value }))
   }
+
+  const handleTimeChange =
+    (type: string) =>
+    ({ target: { value } }: any) => {
+      const date = DateTime.fromFormat(day, DATE_FORMAT)
+      const { hour, minute } = DateTime.fromISO(value)
+      const newDate = date.set({ hour, minute })
+
+      handleChange(type, newDate.toISO())
+    }
 
   const submit = () => {
     if (isNew) {
-      dispatch(saveEvent({ ...event, id: v1(), createdAt: DateTime.local().toISO() }))
+      dispatch(saveEvent({ ...event, day, id: v1(), createdAt: DateTime.local().toISO() }))
     } else {
       dispatch(updateEvent(event))
     }
@@ -113,29 +132,29 @@ export default function EventEditor({ type = 'new' }: Props) {
           value={event['title']}
           label="Название события"
           variant="outlined"
-          onChange={handleChange('title')}
+          onChange={({ target: { value } }) => handleChange('title', value)}
         />
         <StyledField
           required
           type="time"
-          value={event['startTime']}
+          value={convertToTime(event['startTime'])}
           label="Начало события"
           variant="outlined"
-          onChange={handleChange('startTime')}
+          onChange={handleTimeChange('startTime')}
         />
         <StyledField
           required
           type="time"
-          value={event['endTime']}
+          value={convertToTime(event['endTime'])}
           label="Окончание события"
           variant="outlined"
-          onChange={handleChange('endTime')}
+          onChange={handleTimeChange('endTime')}
         />
         <Select
           native
           required
           variant="outlined"
-          onChange={handleChange('remindTime')}
+          onChange={({ target: { value } }) => handleChange('remindTime', value)}
           value={event['remindTime']}
         >
           {remindsInterval.map((interval) => (
