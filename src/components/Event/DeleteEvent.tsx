@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { Close } from '@material-ui/icons'
+import { useDispatch } from 'react-redux'
+import { deleteEvent } from '../../ducks/events'
 
 const StyledModal = styled(Modal)`
   display: flex;
@@ -44,13 +46,15 @@ const Title = styled(Typography)`
 
 export default function DeleteEvent() {
   const history = useHistory()
-  const { day } = useParams<{ day: string; eventId: string }>()
+  const { day, eventId } = useParams<{ day: string; eventId: string }>()
+  const dispatch = useDispatch()
 
   const closeModal = () => {
     history.push(`/day/${day}`)
   }
 
   const submit = () => {
+    dispatch(deleteEvent(eventId))
     closeModal()
   }
 

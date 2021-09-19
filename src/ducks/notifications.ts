@@ -3,11 +3,18 @@ import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
 import { DateTime } from 'luxon'
 import { DateTypes } from '../utils'
+import { propSelector } from '../redux/selectors'
+import { all, call, put, takeEvery } from 'redux-saga/effects'
+import api from '../api'
 
 const name = 'notifications'
 
 export interface Notification {
+  id: string
   message: string
+  status: 'success' | 'error' | 'notification'
+  description: string
+  hideTimeout: number
 }
 
 export interface NotificationsState {
@@ -20,10 +27,10 @@ const { reducer, actions } = createSlice({
   name,
   initialState,
   reducers: {
-    addNotification: (state, { payload }) => {
-      state[payload.id] = { status: 'loading', ...payload }
+    addNotification: (state, { payload }: { payload: Notification }) => {
+      state[payload.id] = payload
     },
-    removeNotification: (state, { payload }) => {
+    deleteNotification: (state, { payload }) => {
       delete state[payload]
     },
   },
@@ -31,7 +38,7 @@ const { reducer, actions } = createSlice({
 
 export default reducer
 
-export const { addNotification, removeNotification } = actions
+export const { addNotification, deleteNotification } = actions
 
 /**
  * Selectors
@@ -39,8 +46,8 @@ export const { addNotification, removeNotification } = actions
 
 export const notificationsSelector = (state: ReduxStore): NotificationsState => state[name]
 
-// export const notificationIdSelector = createSelector(
-//   notificationsSelector,
-//   (notifications, entityId) =>
-//     Object.keys(notifications).find((id) => Number(id) === Number(entityId))
-// )
+export const notificationIdSelector = createSelector(
+  notificationsSelector,
+  propSelector<string>('id'),
+  (notifications, id) => notifications[id] || {}
+)

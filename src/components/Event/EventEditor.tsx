@@ -7,10 +7,9 @@ import { Close } from '@material-ui/icons'
 import { v1 } from 'uuid'
 import { convertDateToTime } from '../../utils/dateHelpers'
 import { DateTime } from 'luxon'
-import api from '../../api'
 import { CalendarEvent } from '../../utils'
-import { useSelector } from 'react-redux'
-import { eventsIdSelector } from '../../ducks/events'
+import { useDispatch, useSelector } from 'react-redux'
+import { eventsIdSelector, saveEvent, updateEvent } from '../../ducks/events'
 
 const StyledModal = styled(Modal)`
   display: flex;
@@ -57,12 +56,13 @@ const Title = styled(Typography)`
 const remindsInterval = [5, 15, 30, 60]
 
 const initialEvent = {
-  id: v1(),
+  id: '',
   title: 'Новая задача',
   startTime: convertDateToTime(),
   endTime: convertDateToTime(DateTime.local().plus({ hours: 1 })),
   remindTime: remindsInterval[0],
   day: '',
+  createdAt: '',
 }
 
 interface Props {
@@ -73,12 +73,13 @@ interface Props {
 export default function EventEditor({ type = 'new' }: Props) {
   const history = useHistory()
   const { day, eventId } = useParams<{ day: string; eventId: string }>()
+  const dispatch = useDispatch()
+
+  const isNew = type === 'new'
 
   const loadedEvent = useSelector((state) => eventsIdSelector(state, { eventId }))
-  console.log(loadedEvent, 'loadedEvent')
-  const [event, changeEvent] = useState<CalendarEvent>(
-    type === 'new' ? { ...initialEvent, day } : loadedEvent || { ...initialEvent, day }
-  )
+
+  const [event, changeEvent] = useState<CalendarEvent>(type === 'new' ? initialEvent : loadedEvent)
 
   const closeModal = () => {
     history.push(`/day/${day}`)
@@ -88,11 +89,11 @@ export default function EventEditor({ type = 'new' }: Props) {
     changeEvent((state) => ({ ...state, [type]: event.target.value }))
   }
 
-  const submit = async () => {
-    if (type === 'new') {
-      await api.saveEvent(event)
+  const submit = () => {
+    if (isNew) {
+      dispatch(saveEvent({ ...event, id: v1(), createdAt: DateTime.local().toISO() }))
     } else {
-      await api.updateEvent(event.id, event)
+      dispatch(updateEvent(event))
     }
 
     closeModal()
@@ -105,7 +106,7 @@ export default function EventEditor({ type = 'new' }: Props) {
           <Close />
         </CloseButton>
 
-        <Title variant="h5">Добавьте новое событие</Title>
+        <Title variant="h5">{isNew ? 'Добавьте новое событие' : 'Измените событие'}</Title>
 
         <StyledField
           required

@@ -6,8 +6,6 @@ import { useHistory, useRouteMatch, Switch, Route } from 'react-router-dom'
 import EventEditor from '../Event/EventEditor'
 import EventList from '../EventList/EventList'
 import DeleteEvent from '../Event/DeleteEvent'
-import { useDispatch } from 'react-redux'
-import { loadEvents } from '../../ducks/events'
 
 const Wrap = styled.div`
   padding: 16px;
@@ -20,11 +18,6 @@ const StyledButton = styled(Button)`
 export default function Day() {
   const history = useHistory()
   const { url } = useRouteMatch()
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(loadEvents())
-  }, [dispatch])
 
   const openNewEventModal = () => {
     history.push(`${url}/event/new`)
