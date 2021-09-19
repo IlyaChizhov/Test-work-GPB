@@ -15,8 +15,10 @@ export default function NotificationInfo({ notification }: { notification: Notif
 
   return (
     <StyledPaper>
-      <Message>{notification.message}</Message>
-      <Description>{notification.description}</Description>
+      <div>
+        <Message>{notification.message}</Message>
+        <Description>{notification.description}</Description>
+      </div>
       <CloseButton onClick={handleDelete}>
         <Close />
       </CloseButton>

@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { eventsDaySelector } from '../../ducks/events'
 import { useParams } from 'react-router'
+import { convertToTime } from '../../utils/dateHelpers'
 
 export default function EventList() {
   const history = useHistory()
@@ -27,7 +28,7 @@ export default function EventList() {
           <div>
             <div>{event.title}</div>
             <div>
-              {event.startTime} до {event.endTime}
+              {convertToTime(event.startTime)} до {convertToTime(event.endTime)}
             </div>
           </div>
 

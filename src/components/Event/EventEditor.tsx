@@ -9,7 +9,7 @@ import { DateTime } from 'luxon'
 import { CalendarEvent, DATE_FORMAT } from '../../utils'
 import { useDispatch, useSelector } from 'react-redux'
 import { eventsIdSelector, saveEvent, updateEvent } from '../../ducks/events'
-import { convertToTime } from '../../utils/dateHelpers'
+import { convertToTime, getInitialDate } from '../../utils/dateHelpers'
 
 const StyledModal = styled(Modal)`
   display: flex;
@@ -53,17 +53,17 @@ const Title = styled(Typography)`
   margin-bottom: 14px;
 `
 
-const remindsInterval = [5, 15, 30, 60]
+export const remindsInterval = [5, 15, 30, 60]
 
-const initialEvent = {
+const getInitialState = (day: string) => ({
   id: '',
   title: 'Новая задача',
-  startTime: DateTime.local().toISO(),
-  endTime: DateTime.local().plus({ hours: 1 }).toISO(),
+  startTime: getInitialDate(day),
+  endTime: getInitialDate(day, true),
   remindTime: remindsInterval[0],
   day: '',
   createdAt: DateTime.local().toISO(),
-}
+})
 
 interface Props {
   type: 'new' | 'edit'
@@ -71,8 +71,8 @@ interface Props {
 }
 
 export default function EventEditor({ type = 'new' }: Props) {
-  const history = useHistory()
   const { day, eventId } = useParams<{ day: string; eventId: string }>()
+  const history = useHistory()
   const dispatch = useDispatch()
 
   const loadedEvent = useSelector((state) => eventsIdSelector(state, { eventId }))
@@ -81,7 +81,7 @@ export default function EventEditor({ type = 'new' }: Props) {
   const isNew = type === 'new'
 
   const [event, changeEvent] = useState<CalendarEvent>(
-    type === 'new' || isEmptyEvent ? initialEvent : loadedEvent
+    type === 'new' || isEmptyEvent ? getInitialState(day) : loadedEvent
   )
 
   useEffect(() => {

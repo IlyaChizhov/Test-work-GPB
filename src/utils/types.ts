@@ -6,6 +6,7 @@ export interface CalendarEvent {
   remindTime: number
   day: string
   createdAt: string
+  expired?: boolean
 }
 
 export type DateTypes = 'year' | 'month'

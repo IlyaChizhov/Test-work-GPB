@@ -1,13 +1,17 @@
-import { select, take, all, call } from 'redux-saga/effects'
+import { select, take, all, call, put } from 'redux-saga/effects'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
 import { DateTime } from 'luxon'
 import { CalendarEvent, DATE_FORMAT, DateTypes } from '../utils'
-import { eventsSelector } from './events'
-import { eventChannel, END } from 'redux-saga'
+import { eventsSelector, updateEvent } from './events'
+import { eventChannel } from 'redux-saga'
+import { addNotification } from './notifications'
+import { v1 } from 'uuid'
+import { convertToTime } from '../utils/dateHelpers'
 
 const name = 'calendar'
+const INTERVAL = 1000 //every 1 second
 
 export interface CalendarState {
   year: number
@@ -63,24 +67,42 @@ function intervalChannel(secs: number) {
 
 export function* calendarWatcherSaga() {
   // @ts-ignore
-  const channel = yield call(intervalChannel, 1000)
+  const channel = yield call(intervalChannel, INTERVAL)
+
   while (true) {
     yield take(channel)
 
     const { events }: { events: CalendarEvent[] } = yield select(eventsSelector)
 
-    const { day, startTime } = events?.[0]
-    const t = DateTime.fromFormat(day, DATE_FORMAT)
-    const time = DateTime.fromISO(startTime)
+    const eventsForToday = events.filter(
+      (event) => !event.expired && event.day === DateTime.local().toFormat(DATE_FORMAT)
+    )
 
-    const modified = t.set({ hour: time.hour, minute: time.minute })
+    const foundEvent = eventsForToday.find((event) => {
+      const { startTime, remindTime } = event
+      const remindDate = DateTime.fromISO(startTime).minus({ minutes: remindTime })
 
-    console.log(modified.toISO())
+      const { milliseconds } = remindDate.diff(DateTime.local()).toObject()
 
-    const foundEvent = events.find((event) => {
-      const { day } = event
-      const t = DateTime.fromFormat(day, DATE_FORMAT)
+      if (milliseconds && milliseconds < INTERVAL) return event
     })
+
+    if (foundEvent) {
+      const { title, startTime, endTime } = foundEvent
+
+      yield put(
+        addNotification({
+          id: v1(),
+          message: 'Напоминание',
+          status: 'notification',
+          description: `У вас запланировано "${title}" c ${convertToTime(
+            startTime
+          )} до ${convertToTime(endTime)}`,
+          hideTimeout: 60 * 1000,
+        })
+      )
+      yield put(updateEvent({ ...foundEvent, expired: true }))
+    }
   }
 }
 
