@@ -1,7 +1,7 @@
-import { CalendarEvent } from '../utils/types'
+import { CalendarEvent } from '../utils'
 import { set, values, del } from 'idb-keyval'
 
-export default {
+const api = {
   getAllEvents: () => {
     return values()
   },
@@ -12,3 +12,5 @@ export default {
     return del(id)
   },
 }
+
+export default api

@@ -1,11 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
-import { DateTime } from 'luxon'
-import { DateTypes } from '../utils'
 import { propSelector } from '../redux/selectors'
-import { all, call, put, takeEvery } from 'redux-saga/effects'
-import api from '../api'
 
 const name = 'notifications'
 
