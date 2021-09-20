@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { eventsDaySelector } from '../../ducks/events'
 import { useParams } from 'react-router'
-import { convertToTime } from '../../utils/dateHelpers'
+import { convertToTime } from '../../utils'
 import styled from 'styled-components'
 import { primaryColor } from '../../styles/variables'
 

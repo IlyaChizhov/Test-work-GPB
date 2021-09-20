@@ -10,6 +10,13 @@ import { v1 } from 'uuid'
 
 const name = 'events'
 
+const initialNotification = {
+  id: v1(),
+  status: 'success',
+  description: '',
+  hideTimeout: 2000,
+}
+
 interface EventsState {
   events: CalendarEvent[]
 }
@@ -68,7 +75,11 @@ function* saveNewEventSaga({ payload }: PayloadAction<CalendarEvent>) {
   try {
     yield call(api.saveEvent, payload)
 
-    yield fork(loadEventsSaga, 'new')
+    yield fork(loadEventsSaga)
+
+    yield put(
+      addNotification({ ...initialNotification, message: 'Событие добавлено' } as Notification)
+    )
   } catch (error: any) {
     yield put(
       addNotification({
@@ -82,11 +93,20 @@ function* saveNewEventSaga({ payload }: PayloadAction<CalendarEvent>) {
   }
 }
 
-function* updateEventSaga({ payload }: PayloadAction<CalendarEvent>) {
+export function* updateEventSaga(
+  { payload }: PayloadAction<CalendarEvent>,
+  withNotification: boolean = true
+) {
   try {
     yield call(api.saveEvent, payload)
 
-    yield fork(loadEventsSaga, 'update')
+    yield fork(loadEventsSaga)
+
+    if (withNotification) {
+      yield put(
+        addNotification({ ...initialNotification, message: 'Событие обновлено' } as Notification)
+      )
+    }
   } catch (error: any) {
     yield put(
       addNotification({
@@ -104,7 +124,11 @@ function* deleteEventSaga({ payload }: PayloadAction<string>) {
   try {
     yield call(api.deleteEvent, payload)
 
-    yield fork(loadEventsSaga, 'delete')
+    yield fork(loadEventsSaga)
+
+    yield put(
+      addNotification({ ...initialNotification, message: 'Событие удалено' } as Notification)
+    )
   } catch (error: any) {
     yield put(
       addNotification({
@@ -118,36 +142,11 @@ function* deleteEventSaga({ payload }: PayloadAction<string>) {
   }
 }
 
-function* loadEventsSaga(type: 'new' | 'update' | 'delete' = 'new') {
+function* loadEventsSaga() {
   try {
     const events: CalendarEvent[] = yield call(api.getAllEvents)
 
     yield put(eventsLoaded(events))
-
-    const initialNotification = {
-      id: v1(),
-      status: 'success',
-      description: '',
-      hideTimeout: 2000,
-    }
-
-    if (type === 'new') {
-      yield put(
-        addNotification({ ...initialNotification, message: 'Событие добавлено' } as Notification)
-      )
-    }
-
-    if (type === 'update') {
-      yield put(
-        addNotification({ ...initialNotification, message: 'Событие обновлено' } as Notification)
-      )
-    }
-
-    if (type === 'delete') {
-      yield put(
-        addNotification({ ...initialNotification, message: 'Событие удалено' } as Notification)
-      )
-    }
   } catch (error: any) {
     yield put(
       addNotification({

@@ -4,14 +4,12 @@ import './index.scss'
 import App from './App'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
-import { createGenerateClassName, StylesProvider } from '@material-ui/styles'
-
-const generateClassName = createGenerateClassName()
+import { StylesProvider } from '@material-ui/styles'
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <StylesProvider generateClassName={generateClassName} injectFirst>
+      <StylesProvider injectFirst>
         <App />
       </StylesProvider>
     </Provider>

@@ -3,6 +3,7 @@ import { Button, Select, TableCell } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import {
   borderColor,
+  grayText,
   lightBlue,
   lightBorderColor,
   lightGray,
@@ -42,7 +43,7 @@ export const StyledLink = styled(Link)`
     '$isOutOfMonth',
     css`
       border-top: 2px solid ${lightBorderColor};
-      color: ${borderColor};
+      color: ${grayText};
       background-color: ${lightGray};
     `
   )}

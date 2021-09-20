@@ -1,14 +1,14 @@
-import { select, take, all, call, put } from 'redux-saga/effects'
+import { select, take, all, call, put, fork } from 'redux-saga/effects'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
 import { DateTime } from 'luxon'
 import { CalendarEvent, DATE_FORMAT, DateTypes } from '../utils'
-import { activeEventsDaySelector, updateEvent } from './events'
+import { activeEventsDaySelector, updateEventSaga } from './events'
 import { eventChannel } from 'redux-saga'
 import { addNotification } from './notifications'
 import { v1 } from 'uuid'
-import { convertToTime } from '../utils/dateHelpers'
+import { convertToTime } from '../utils'
 
 const name = 'calendar'
 const INTERVAL = 1000
@@ -99,7 +99,9 @@ export function* calendarWatcherSaga() {
           hideTimeout: 60 * 1000,
         })
       )
-      yield put(updateEvent({ ...foundEvent, expired: true }))
+
+      // @ts-ignore
+      yield fork(updateEventSaga, { payload: { ...foundEvent, expired: true } }, false)
     }
   }
 }

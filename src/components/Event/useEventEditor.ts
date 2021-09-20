@@ -5,7 +5,7 @@ import { eventsIdSelector, saveEvent, updateEvent } from '../../ducks/events'
 import { useEffect, useMemo, useState } from 'react'
 import { DateTime } from 'luxon'
 import { v1 } from 'uuid'
-import { getInitialDate } from '../../utils/dateHelpers'
+import { getInitialDate } from '../../utils'
 import { remindsInterval } from './EventEditor'
 import { CalendarEvent, DATE_FORMAT } from '../../utils'
 

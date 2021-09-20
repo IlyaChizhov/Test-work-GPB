@@ -4,10 +4,11 @@ import styled from 'styled-components'
 import { Close, ErrorOutline } from '@material-ui/icons'
 import useNotification from './useNotification'
 import { CloseButton, StyledPaper, Message } from './StyledComponents'
+import { grayText } from '../../styles/variables'
 
 const Description = styled.div`
   font-size: 14px;
-  color: #575555;
+  color: ${grayText};
 `
 
 const Icon = styled(ErrorOutline)`

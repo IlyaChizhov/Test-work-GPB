@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { CalendarEvent } from '../../utils'
-import { convertToTime } from '../../utils/dateHelpers'
+import { convertToTime } from '../../utils'
 import useEventEditor from './useEventEditor'
 import {
   ButtonGroup,
