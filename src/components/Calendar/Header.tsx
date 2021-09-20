@@ -19,7 +19,7 @@ const Wrap = styled.div`
   width: 100%;
 `
 
-const hardcodedYears = [2020, 2021, 2022, 2023, 2024]
+const hardcodedYears = [2021, 2022, 2023, 2024, 2025]
 
 const months = Info.months('short', { locale: 'en-US' }).map((month, index) => ({
   title: month,
