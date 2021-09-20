@@ -1,27 +1,22 @@
 import React from 'react'
-import { Button, FormControl, Select } from '@material-ui/core'
+import { FormControl } from '@material-ui/core'
 import styled from 'styled-components'
 import { Info } from 'luxon'
 import { useDispatch, useSelector } from 'react-redux'
 import { activeMonthSelector, activeYearSelector, changeActiveDate } from '../../ducks/calendar'
 import { DateTypes } from '../../utils'
+import {
+  ButtonGroup,
+  ControlWrap,
+  StyledButtonLeft,
+  StyledButtonRight,
+  StyledSelect,
+} from './StyledCalendarComponents'
 
 const Wrap = styled.div`
   display: flex;
-  padding: 16px;
   justify-content: flex-end;
   width: 100%;
-`
-
-const ControlWrap = styled.div`
-  margin-right: 15px;
-`
-
-const ButtonGroup = styled.div`
-  display: flex;
-`
-const StyledButton = styled(Button)`
-  text-transform: none;
 `
 
 const hardcodedYears = [2020, 2021, 2022, 2023, 2024]
@@ -45,7 +40,7 @@ export default function Header() {
     <Wrap>
       <ControlWrap>
         <FormControl variant="outlined">
-          <Select
+          <StyledSelect
             native
             value={activeYear}
             onChange={handleChangeSelect('year')}
@@ -59,13 +54,13 @@ export default function Header() {
                 {year}
               </option>
             ))}
-          </Select>
+          </StyledSelect>
         </FormControl>
       </ControlWrap>
 
       <ControlWrap>
         <FormControl variant="outlined">
-          <Select
+          <StyledSelect
             native
             value={activeMonth}
             onChange={handleChangeSelect('month')}
@@ -79,13 +74,15 @@ export default function Header() {
                 {title}
               </option>
             ))}
-          </Select>
+          </StyledSelect>
         </FormControl>
       </ControlWrap>
 
       <ButtonGroup>
-        <StyledButton variant="outlined">Month</StyledButton>
-        <StyledButton variant="outlined">Year</StyledButton>
+        <StyledButtonLeft color="primary" variant="outlined">
+          Month
+        </StyledButtonLeft>
+        <StyledButtonRight variant="outlined">Year</StyledButtonRight>
       </ButtonGroup>
     </Wrap>
   )

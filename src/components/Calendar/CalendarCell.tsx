@@ -1,24 +1,41 @@
 import React from 'react'
 import { DateTime } from 'luxon'
-import { TableCell } from '@material-ui/core'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { DATE_FORMAT } from '../../utils'
-
-const StyledCell = styled(TableCell)`
-  //background-color: red;
-`
+import { useSelector } from 'react-redux'
+import { activeMonthSelector } from '../../ducks/calendar'
+import { activeEventsDaySelector } from '../../ducks/events'
+import { Event, EventWrap, Round, StyledCell, StyledLink, Text } from './StyledCalendarComponents'
+import { Tooltip } from '@material-ui/core'
 
 interface Props {
   day: DateTime
 }
 
 export default function CalendarCell({ day }: Props) {
+  const activeMonth = useSelector(activeMonthSelector)
+  const formattedDay = day.toFormat(DATE_FORMAT)
+  const events = useSelector((state) => activeEventsDaySelector(state, { day: formattedDay }))
+
+  const isToday = formattedDay === DateTime.local().toFormat(DATE_FORMAT)
+  const isOutOfMonth = day.month !== activeMonth
+
   return (
     <StyledCell>
-      <div>
-        <Link to={`/day/${day.toFormat(DATE_FORMAT)}`}>{day.day}</Link>
-      </div>
+      <Tooltip title={day.toLocaleString(DateTime.DATE_FULL)}>
+        <StyledLink $isOutOfMonth={isOutOfMonth} $isToday={isToday} to={`/day/${formattedDay}`}>
+          <span>{day.day}</span>
+          {Boolean(events.length) && (
+            <EventWrap>
+              {events.map((event) => (
+                <Event key={event.id}>
+                  <Round />
+                  <Text>{event.title}</Text>
+                </Event>
+              ))}
+            </EventWrap>
+          )}
+        </StyledLink>
+      </Tooltip>
     </StyledCell>
   )
 }

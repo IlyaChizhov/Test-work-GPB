@@ -6,13 +6,30 @@ import { useHistory, useRouteMatch, Switch, Route, Link } from 'react-router-dom
 import EventEditor from '../Event/EventEditor'
 import EventList from '../EventList/EventList'
 import DeleteEvent from '../Event/DeleteEvent'
+import { primaryColor } from '../../styles/variables'
 
 const Wrap = styled.div`
   padding: 16px;
+  max-width: 980px;
+  margin: auto;
 `
 
 const StyledButton = styled(Button)`
   text-transform: none;
+  background-color: ${primaryColor};
+  padding: 8px 30px;
+  font-weight: 600;
+`
+
+const Icon = styled(Add)`
+  margin-right: 10px;
+`
+
+const Buttons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
 `
 
 export default function Day() {
@@ -25,13 +42,13 @@ export default function Day() {
 
   return (
     <Wrap>
-      <div>
+      <Buttons>
         <StyledButton onClick={openNewEventModal} color="primary" variant="contained">
-          <Add /> New Event
+          <Icon /> Новое событие
         </StyledButton>
 
-        <Link to="/">Return to Calendar</Link>
-      </div>
+        <Link to="/">Вернуться в календарь</Link>
+      </Buttons>
 
       <EventList />
 

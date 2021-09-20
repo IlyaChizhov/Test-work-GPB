@@ -1,47 +1,22 @@
 import React from 'react'
-import { Button, IconButton, Modal, Paper, Typography } from '@material-ui/core'
+import { Button, Paper } from '@material-ui/core'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useParams } from 'react-router'
 import { Close } from '@material-ui/icons'
 import { useDispatch } from 'react-redux'
 import { deleteEvent } from '../../ducks/events'
-
-const StyledModal = styled(Modal)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
+import { ButtonGroup, CloseButton, StyledModal, Title } from './StyledEditorComponents'
 
 const StyledPaper = styled(Paper)`
-  width: 60vw;
-  height: 60vh;
+  width: 500px;
+  height: 300px;
   margin: auto;
   position: relative;
   outline: none;
   padding: 25px 16px;
   display: flex;
   flex-direction: column;
-`
-
-const CloseButton = styled(IconButton)`
-  position: absolute;
-  right: 5px;
-  top: 5px;
-`
-
-const ButtonGroup = styled.div`
-  margin-top: auto;
-  display: flex;
-  justify-content: flex-end;
-
-  button {
-    margin-left: 16px;
-  }
-`
-
-const Title = styled(Typography)`
-  margin-bottom: 14px;
 `
 
 export default function DeleteEvent() {
@@ -65,7 +40,7 @@ export default function DeleteEvent() {
           <Close />
         </CloseButton>
 
-        <Title variant="h4">Удалить это событие?</Title>
+        <Title variant="h5">Удалить это событие?</Title>
 
         <ButtonGroup>
           <Button onClick={closeModal} variant="contained">

@@ -54,6 +54,12 @@ export const eventsDaySelector = createSelector(
   ({ events }, day) => events.filter((event) => event.day === day)
 )
 
+export const activeEventsDaySelector = createSelector(
+  eventsSelector,
+  propSelector<string>('day'),
+  ({ events }, day) => events.filter((event) => !event.expired && event.day === day)
+)
+
 /**
  * Sagas
  **/

@@ -5,6 +5,30 @@ import { useSelector } from 'react-redux'
 import { eventsDaySelector } from '../../ducks/events'
 import { useParams } from 'react-router'
 import { convertToTime } from '../../utils/dateHelpers'
+import styled from 'styled-components'
+import { primaryColor } from '../../styles/variables'
+
+const EventItem = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`
+
+const Title = styled.div`
+  font-size: 20px;
+  margin-bottom: 5px;
+`
+
+const Description = styled.div`
+  color: gray;
+`
+
+const StyledButton = styled(Button)`
+  text-transform: none;
+  color: ${primaryColor};
+`
 
 export default function EventList() {
   const history = useHistory()
@@ -12,6 +36,11 @@ export default function EventList() {
   const { day } = useParams<{ day: string }>()
 
   const events = useSelector((state) => eventsDaySelector(state, { day }))
+
+  const sortedEvents = events.sort((a, b) => {
+    if (a.createdAt > b.createdAt) return -1
+    return 1
+  })
 
   const handleEdit = (id: string) => () => {
     history.push(`${url}/event/${id}/edit`)
@@ -23,24 +52,25 @@ export default function EventList() {
 
   return (
     <div>
-      {events.map((event) => (
-        <div key={event.id}>
+      {sortedEvents.map((event) => (
+        <EventItem key={event.id}>
           <div>
-            <div>{event.title}</div>
-            <div>
-              {convertToTime(event.startTime)} до {convertToTime(event.endTime)}
-            </div>
+            <Title>{event.title}</Title>
+            <Description>
+              {convertToTime(event.startTime)} до {convertToTime(event.endTime)}{' '}
+              {event.expired ? '(просрочена)' : null}
+            </Description>
           </div>
 
           <div>
-            <Button onClick={handleEdit(event.id)} variant="text">
+            <StyledButton onClick={handleEdit(event.id)} variant="text">
               Редактировать
-            </Button>
-            <Button onClick={handleDelete(event.id)} variant="text">
+            </StyledButton>
+            <StyledButton onClick={handleDelete(event.id)} variant="text">
               Удалить
-            </Button>
+            </StyledButton>
           </div>
-        </div>
+        </EventItem>
       ))}
     </div>
   )

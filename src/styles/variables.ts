@@ -1,0 +1,6 @@
+export const borderColor = '#bfbcbc'
+export const lightBorderColor = '#cdcbcb'
+export const mainColor = '#474545'
+export const primaryColor = '#328ae2'
+export const lightBlue = '#c4eaf6'
+export const lightGray = '#f1efef'

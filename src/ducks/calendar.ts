@@ -4,14 +4,14 @@ import { createSelector } from 'reselect'
 import { ReduxStore } from '../redux/store'
 import { DateTime } from 'luxon'
 import { CalendarEvent, DATE_FORMAT, DateTypes } from '../utils'
-import { eventsSelector, updateEvent } from './events'
+import { activeEventsDaySelector, eventsDaySelector, eventsSelector, updateEvent } from './events'
 import { eventChannel } from 'redux-saga'
 import { addNotification } from './notifications'
 import { v1 } from 'uuid'
 import { convertToTime } from '../utils/dateHelpers'
 
 const name = 'calendar'
-const INTERVAL = 1000 //every 1 second
+const INTERVAL = 1000
 
 export interface CalendarState {
   year: number
@@ -72,13 +72,11 @@ export function* calendarWatcherSaga() {
   while (true) {
     yield take(channel)
 
-    const { events }: { events: CalendarEvent[] } = yield select(eventsSelector)
-
-    const eventsForToday = events.filter(
-      (event) => !event.expired && event.day === DateTime.local().toFormat(DATE_FORMAT)
+    const events: CalendarEvent[] = yield select((state) =>
+      activeEventsDaySelector(state, { day: DateTime.local().toFormat(DATE_FORMAT) })
     )
 
-    const foundEvent = eventsForToday.find((event) => {
+    const foundEvent = events.find((event) => {
       const { startTime, remindTime } = event
       const remindDate = DateTime.fromISO(startTime).minus({ minutes: remindTime })
 

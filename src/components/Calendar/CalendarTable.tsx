@@ -6,8 +6,19 @@ import { getCalendarRows } from '../../utils'
 import { DateTime } from 'luxon'
 import { DAYS_IN_WEEK } from '../../utils'
 import CalendarCell from './CalendarCell'
+import styled from 'styled-components'
 
-// Info.weekdays('short', { locale: 'en-US' }).map(str => str.substring(0, 2))
+const StyledRow = styled(TableRow)`
+  border: none;
+`
+
+const StyledCell = styled(TableCell)`
+  padding-bottom: 2px;
+  text-align: right;
+  border: none;
+  font-size: 17px;
+`
+
 const daysOfWeek = Array.from({ length: DAYS_IN_WEEK }, (_, index) =>
   DateTime.local({ locale: 'en-US' }).set({ weekday: index }).weekdayShort.substring(0, 2)
 )
@@ -22,19 +33,21 @@ export default function CalendarTable() {
     <TableContainer component={'div'}>
       <Table>
         <TableHead>
-          <TableRow>
+          <StyledRow>
             {daysOfWeek.map((day) => (
-              <TableCell key={day}>{day}</TableCell>
+              <StyledCell key={day}>
+                <div>{day}</div>
+              </StyledCell>
             ))}
-          </TableRow>
+          </StyledRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={`${row[0]?.toISO()}-${index}`}>
+            <StyledRow key={`${row[0]?.toISO()}-${index}`}>
               {row.map((day) => (
                 <CalendarCell key={day.toISO()} day={day} />
               ))}
-            </TableRow>
+            </StyledRow>
           ))}
         </TableBody>
       </Table>
